@@ -1,120 +1,45 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import TaskAdd from "../task-add/TaskAdd";
 import TaskItem from "../task-item/TaskItem";
+import api from "../../api/todo.api";
 function Todo(props) {
   const token = props.token;
   const [isFetchingData, setIsFetchingData] = useState(true);
   const [tasks, setTasks] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const url = "https://api-nodejs-todolist.herokuapp.com/task";
 
-  const getListTask = () => {
-    axios
-      .get(url, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then(function (response) {
-        setIsLoading(true);
-        setTasks(
-          response.data.data.sort((a, b) => {
-            if (a.completed) return 1;
-            if (a.description < b.description) return -1;
-            if (a.description > b.description) return 1;
-            return 0;
-          }),
-        );
-        setIsFetchingData(false);
-      })
-      .catch((error) => console.log(error));
+  const getListTask = async () => {
+    setIsLoading(true);
+    setTasks(await api.getAllTask(token));
+    setIsFetchingData(false);
   };
 
-  const onAddTask = (description) => {
+  const onAddTask = async (description) => {
     setIsFetchingData(true);
-    axios
-      .post(
-        "https://api-nodejs-todolist.herokuapp.com/task",
-        {
-          description,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      )
-      .then(function (response) {
-        console.log(response.statusText);
-        getListTask();
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+    await api.addTask(token, description);
+    setTasks(await api.getAllTask(token));
+    setIsFetchingData(false);
   };
 
-  const onCbChange = (taskId, completed) => {
+  const onCbChange = async (taskId, completed) => {
     setIsFetchingData(true);
-    axios
-      .put(
-        `${url}/${taskId}`,
-        {
-          completed,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      )
-      .then(function (response) {
-        console.log(response.statusText);
-        getListTask();
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+    await api.toggleComplete(token, taskId, completed);
+    setTasks(await api.getAllTask(token));
+    setIsFetchingData(false);
   };
 
-  const onConfirmDelete = (taskId) => {
+  const onConfirmDelete = async (taskId) => {
     setIsFetchingData(true);
-    axios
-      .delete(`${url}/${taskId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then(function (response) {
-        console.log(response.statusText);
-        getListTask();
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+    await api.deleteTask(token, taskId);
+    setTasks(await api.getAllTask(token));
+    setIsFetchingData(false);
   };
 
-  const onDoneClick = (taskId, newDescription) => {
+  const onDoneClick = async (taskId, newDescription) => {
     setIsFetchingData(true);
-    axios
-      .put(
-        `${url}/${taskId}`,
-        {
-          description: newDescription,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      )
-      .then(function (response) {
-        console.log(response.statusText);
-        getListTask();
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+    await api.updateDescription(token, taskId, newDescription);
+    setTasks(await api.getAllTask(token));
+    setIsFetchingData(false);
   };
 
   useEffect(() => {
