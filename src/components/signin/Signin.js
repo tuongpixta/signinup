@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-function Signin() {
+function Signin(props) {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -23,23 +23,23 @@ function Signin() {
     console.log(email);
     console.log(password);
     e.preventDefault();
-    // axios
-    //   .post("https://api-nodejs-todolist.herokuapp.com/user/login", {
-    //     email: email,
-    //     password: password,
-    //   })
-    //   .then(function (response) {
-    //     window.sessionStorage.setItem("token", response.data.token);
-    //     console.log(window.sessionStorage.getItem("token"));
-    //     try {
-    //       navigate("/");
-    //     } catch (e) {
-    //       alert(e.message);
-    //     }
-    //   })
-    //   .catch(function (error) {
-    //     console.log(error);
-    //   });
+    axios
+      .post("https://api-nodejs-todolist.herokuapp.com/user/login", {
+        email: email,
+        password: password,
+      })
+      .then(function (response) {
+        window.sessionStorage.setItem("token", response.data.token);
+        try {
+          navigate("/");
+          props.onLoggedIn();
+        } catch (e) {
+          alert(e.message);
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
   };
   return (
     <form className="bg-white p-10 rounded" onSubmit={handleSubmit}>

@@ -1,11 +1,15 @@
 import React, { useState } from "react";
 import Signin from "../signin/Signin";
 import Signup from "../signup/Signup";
-function Screen() {
+function Screen(props) {
   const [isSignup, setIsSignup] = useState(false);
   const btnText = ["Sign up", "Sign in"];
   const handleButtonClick = () => {
     setIsSignup(!isSignup);
+  };
+
+  const onLoggedIn = () => {
+    props.onLoggedIn();
   };
 
   return (
@@ -16,7 +20,11 @@ function Screen() {
       >
         Change to {btnText[isSignup ? 1 : 0]}
       </button>
-      {isSignup ? <Signup /> : <Signin />}
+      {isSignup ? (
+        <Signup onLoggedIn={onLoggedIn} />
+      ) : (
+        <Signin onLoggedIn={onLoggedIn} />
+      )}
     </div>
   );
 }

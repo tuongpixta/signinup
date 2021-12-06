@@ -42,7 +42,6 @@ function Signup() {
       .then(function (response) {
         console.log(response);
         window.sessionStorage.setItem("token", response.data.token);
-        console.log(window.sessionStorage.getItem("token"));
       })
       .catch(function (error) {
         console.log(error);
