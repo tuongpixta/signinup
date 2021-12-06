@@ -1,38 +1,19 @@
 import React, { useState } from "react";
-import axios from "axios";
-function Task() {
-  const token = window.sessionStorage.getItem("token");
+function TaskAdd(props) {
   const [description, setDescription] = useState("");
-  const handleChange = (e) => setDescription(e.target.value);
+  const onChange = (e) => setDescription(e.target.value);
 
-  const handleSubmit = (e) => {
+  const onSubmit = (e) => {
     e.preventDefault();
-    axios
-      .post(
-        "https://api-nodejs-todolist.herokuapp.com/task",
-        {
-          description,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      )
-      .then(function (response) {
-        console.log(response);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+    props.onSubmit(description);
   };
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={onSubmit}>
       <div className="flex flex-col">
         <div className="grid grid-cols-1 gap-4 mb-7 mx-auto">
           <div className="grid grid-cols-3 gap-4">
             <input
-              onChange={handleChange}
+              onChange={onChange}
               className="col-span-2 border-solid border-gray-300 border-b pl-2 outline-none"
               type="task"
               placeholder="Enter task"
@@ -53,4 +34,4 @@ function Task() {
     </form>
   );
 }
-export default Task;
+export default TaskAdd;
