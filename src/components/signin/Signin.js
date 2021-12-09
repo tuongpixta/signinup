@@ -1,7 +1,17 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+
+import { createStore } from "redux";
+import rootReducer from "../../reducers";
+import * as tokenAction from "../../actions/tokenAction";
+
 function Signin(props) {
+  let store = createStore(
+    rootReducer,
+    window.__REDUX_DEVTOOLS_EXTENSION__ &&
+      window.__REDUX_DEVTOOLS_EXTENSION__(),
+  );
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -29,9 +39,10 @@ function Signin(props) {
         password: password,
       })
       .then(function (response) {
-        window.sessionStorage.setItem("token", response.data.token);
+        // window.sessionStorage.setItem("token", );
+        console.log(store.dispatch(tokenAction.addToken(response.data.token)));
         try {
-          navigate("/");
+          navigate("/todo");
           props.onLoggedIn();
         } catch (e) {
           alert(e.message);

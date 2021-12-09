@@ -23,13 +23,9 @@ function App() {
       <Header token={token} onLoggedOut={onLoggedOut} />
       <div className="p-5">
         <Routes>
-          <Route path="/" exact element={<Dashboard />} />
-          <Route path="/todo" exact element={<Todo token={token} />} />
-          <Route
-            path="/login"
-            exact
-            element={<Screen onLoggedIn={onLoggedIn} />}
-          />
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/todo" element={<Todo token={token} />} />
+          <Route path="/login" element={<Screen onLoggedIn={onLoggedIn} />} />
         </Routes>
       </div>
     </Router>
