@@ -1,6 +1,20 @@
 import React, { useState } from "react";
+
+// import { createStore } from "redux";
+// import rootReducer from "../../reducers";
+// import * as todoAction from "../../actions/todoAction";
+// import { selectTask } from "../../selector/todoSelector";
 function TaskItem(props) {
-  const { task } = props;
+  // let store = createStore(
+  //   rootReducer,
+  //   window.__REDUX_DEVTOOLS_EXTENSION__ &&
+  //     window.__REDUX_DEVTOOLS_EXTENSION__(),
+  // );
+
+  // store.dispatch(todoAction.getTask({ task_id: props.task_id }));
+  // console.log(store.getState());
+  // const task = selectTask(store.getState());
+  const task = props.task;
   const [isEditting, setIsEditting] = useState(false);
   const [newValue, setNewValue] = useState(props.task.description);
   const oldValue = props.task.description;

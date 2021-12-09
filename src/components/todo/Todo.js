@@ -2,15 +2,30 @@ import React, { useState, useEffect } from "react";
 import TaskAdd from "../task-add/TaskAdd";
 import TaskItem from "../task-item/TaskItem";
 import api from "../../api/todo.api";
-function Todo(props) {
-  const token = props.token;
+
+import { createStore } from "redux";
+import rootReducer from "../../reducers";
+import * as todoAction from "../../actions/todoAction";
+import { selectTasks } from "../../selector/todoSelector";
+import { selectToken } from "../../selector/tokenSelector";
+
+function Todo() {
+  let store = createStore(
+    rootReducer,
+    window.__REDUX_DEVTOOLS_EXTENSION__ &&
+      window.__REDUX_DEVTOOLS_EXTENSION__(),
+  );
+  console.log(store.getState())
+  const token = selectToken(store.getState());
+  console.log(token)
   const [isFetchingData, setIsFetchingData] = useState(true);
   const [tasks, setTasks] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [dataExisted, setDataExisted] = useState(false);
 
   const getListTask = async () => {
-    setIsLoading(true);
-    setTasks(await api.getAllTask(token));
+    setDataExisted(true);
+    store.dispatch(todoAction.getAllTask({ token }));
+    setTasks(await selectTasks(store.getState()));
     setIsFetchingData(false);
   };
 
@@ -43,12 +58,12 @@ function Todo(props) {
   };
 
   useEffect(() => {
-    if (!isLoading) {
+    if (!dataExisted) {
       getListTask();
     }
   });
 
-  return (
+  return token ? (
     <div className="h-screen">
       <div className="bg-white p-10 rounded max-w-2xl mb-5 mx-auto relative">
         {isFetchingData ? (
@@ -61,19 +76,24 @@ function Todo(props) {
         <h1 className="text-center text-3xl mb-5">Todos</h1>
         <TaskAdd onSubmit={onAddTask} token={token} />
         <div className="bordered">
-          {tasks.map((task) => (
-            <TaskItem
-              key={task._id}
-              task={task}
-              token={token}
-              onCbChange={onCbChange}
-              onConfirmDelete={onConfirmDelete}
-              onDoneClick={onDoneClick}
-            />
-          ))}
+          {token && tasks.length > 0 ? (
+            tasks.map((task) => (
+              <TaskItem
+                key={task._id}
+                task={task}
+                onCbChange={onCbChange}
+                onConfirmDelete={onConfirmDelete}
+                onDoneClick={onDoneClick}
+              />
+            ))
+          ) : (
+            <div>No data</div>
+          )}
         </div>
       </div>
     </div>
+  ) : (
+    <div>No token</div>
   );
 }
 export default Todo;
